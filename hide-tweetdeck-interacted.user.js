@@ -1,7 +1,10 @@
 // ==UserScript==
-// @name    hide already liked/retweeted tweetdeck
-// @version 1.0
-// @match   https://tweetdeck.twitter.com/*
+// @name        Hide Tweetdeck Interacted Tweets
+// @description Remove posts from tweetdeck timelines that have already been liked/retweeted
+// @namespace   https://github.com/alexwh
+// @updateURL   https://github.com/alexwh/hide-tweetdeck-interacted/raw/master/hide-tweetdeck-interacted.user.js
+// @version     1.0
+// @match       https://tweetdeck.twitter.com/*
 // ==/UserScript==
 
 (function() {

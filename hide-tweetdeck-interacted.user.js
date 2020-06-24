@@ -6,37 +6,23 @@
 // ==/UserScript==
 
 (function() {
-    'use strict';
+  'use strict';
 
-    const to_hide = [
-        `i.js-icon-favorite.icon-heart-filled`,
-        `i.js-icon-retweet.icon-retweet-filled`
-    ];
-    let updating = false;
-
-    function hideTweets() {
-      for (const target of to_hide) {
-        document.querySelectorAll(`${target}:not(.userscript-already-hidden)`).forEach(icon => {
-              let tweet = icon.closest(".stream-item");
-              if (!tweet.querySelector(':hover')) { // don't pull stuff out from beneath our feet
-                icon.classList.add("userscript-already-hidden");
-                tweet.style.display = "none";
-                console.log("rm", tweet, "for reason", target);
-              }
-          });
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'childList' &&
+          mutation.target.className.includes("chirp-container") &&
+          mutation.addedNodes.length > 1) {
+        for (let tweet of mutation.addedNodes) {
+          if (tweet.querySelectorAll(`i.js-icon-favorite.icon-heart-filled, i.js-icon-retweet.icon-retweet-filled`).length > 0) {
+            tweet.style.display = "none";
+            console.log("rm", tweet);
+          }
+        }
       }
-    }
+    });
+  });
 
-    function update() {
-        if (updating) return;
-        updating = true;
-        hideTweets();
-        setTimeout(() => { updating = false; }, 1000);
-    }
-
-    // listen to document scroll events, as tweetdeck columns aren't `window`
-    // useCapture true because scroll doesn't normally bubble
-    document.addEventListener('scroll', update, true);
-    // though we start on "document-idle", tweets still take longer to load, so wait 2s before initally hiding
-    setTimeout(() => hideTweets(), 2000);
+  // observe on .application, which also includes e.g. user chirp-container modals
+  observer.observe(document.querySelector(".application"), {childList: true, subtree: true});
 })();

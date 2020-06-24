@@ -32,7 +32,7 @@
 
   const tweetObserver = new MutationObserver(mutations => {
     mutations.forEach((mutation) => {
-      if (mutation.target.className.includes("chirp-container") && mutation.addedNodes.length > 1) {
+      if (mutation.target.className.includes("chirp-container") && mutation.addedNodes.length > 0) {
         for (let tweet of mutation.addedNodes) {
           // liked or retweeted
           if (tweet.querySelectorAll(`i.js-icon-favorite.icon-heart-filled, i.js-icon-retweet.icon-retweet-filled`).length > 0) {

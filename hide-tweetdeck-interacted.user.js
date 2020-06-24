@@ -23,6 +23,13 @@
     });
   });
 
-  // observe on .application, which also includes e.g. user chirp-container modals
-  observer.observe(document.querySelector(".application"), {childList: true, subtree: true});
+  const opts = {childList: true, subtree: true};
+  for (let column of document.querySelectorAll(`section.column`)) {
+    if (column.querySelectorAll(`i.icon-notifications`).length < 1) {
+      console.log("observing", column);
+      //observer.observe(column, opts);
+    }
+  }
+  // for e.g. user tweet modals containing chirp-containers
+  observer.observe(document.querySelector(`div#open-modal`), opts);
 })();

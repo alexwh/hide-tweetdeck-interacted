@@ -16,7 +16,7 @@ function patch() {
     // this.accountSelector.$node.on(TD.components.AccountSelector.CHANGE, this._handleAccountSelectionChange.bind(this))
     // this.accountSelector.selectAccount(t.account)
     // this.setAndShowContainer((0, s.default) ('#actions-modal'))
-    window.TD.components.ActionDialog.prototype.displayTweet = function(t) {
+    unsafeWindow.TD.components.ActionDialog.prototype.displayTweet = function(t) {
         this.accountSelector.selectAccount(t.account)
         this._retweet()
     }
@@ -26,7 +26,7 @@ function patch() {
     // retweets, and lists. to not remove lists, check for the presence of the
     // this.$retweetButton variable also. the rest of the function after the
     // first line remains unchanged from the original
-    window.TD.components.BaseModal.prototype.setAndShowContainer = function(e, t) {
+    unsafeWindow.TD.components.BaseModal.prototype.setAndShowContainer = function(e, t) {
         if (e.selector === "#actions-modal" && typeof this.$retweetButton !== 'undefined') { return; }
         'boolean' != typeof t && (t = !0),
             t && e.empty(),
@@ -36,7 +36,7 @@ function patch() {
 }
 
 (function wait() {
-    if (window.TD && window.TD.ready) {
+    if (unsafeWindow.TD && unsafeWindow.TD.ready) {
         patch();
     } else {
         setTimeout(wait, 1000);

@@ -36,4 +36,81 @@
             e.append(this.$node).show(),
             this._checkIfTouchModal(e)
     }
+
+    // monologue below about my inexperience with js and userscripts, fumbling
+    // around to try and get a good solution for this disgustingly easy problem
+
+    // this method ended up being the cleanest overall, as we maintain
+    // tweetdeck's built in error handling, and don't need to reimplement a lot
+    // of stuff.
+
+    // originally, I wanted to monkeypatch the
+    // `TD.services.TwitterStatus.prototype.retweet` function to not create the
+    // `TD.components.ActionDialog` object in the first place, and instead just
+    // trigger the `uiRetweet` event directly which is later done by
+    // `TD.components.ActionDialog`'s `_retweet` method.
+    // this wasn't possible because jQuery listeners can't receive extra event
+    // info from regular javascript event senders (which we need to send the
+    // `tweetId` and `from` parameters). we also can't import jQuery in the
+    // userscript and use $(document).trigger as they're namespaced separately
+    // and the original tweetdeck jQuery instance never receives the event.
+
+    // after, I tried reimplementing the `sendRetweet` function that gets
+    // called by the `uiRetweet` event in
+    // `TD.services.TwitterStatus.prototype.retweet`. this also led to
+    // reimplementing `makeTwitterApiCall` and
+    // `TD.services.TwitterClient.prototype.makeTwitterCall`, and ended up
+    // becoming too unwieldly when I had to delve into using tweetdeck's async
+    // deferring techniques for undoing retweets (you need to search the
+    // original tweet with the `include_my_retweet` parameter, then call
+    // destroy on that id).
+
+    // there was also an attempt at creating a custom ActionDialog object that
+    // would skip itself, but that didn't get very far either.
+
+    // the unfinished code for all is included below, in order:
+
+    // function custom_rt() {
+    //     let acct = TD.storage.accountController.getPostingAccounts()[0].privateState.key
+    //     let edetail = { id: "xxxx", from: [acct] }
+    //     let rtev = new CustomEvent('uiRetweet', edetail);
+    //     document.dispatchEvent(rtev)
+    // }
+
+    // TD.services.TwitterStatus.prototype.retweet = function () {
+    //     if (!this.isRetweeted) {
+    //         // uiRetweet(id: this.id, from:this.account.getKey())
+    //         let url = TD.services.TwitterClient.prototype.API_BASE_URL + "statuses/retweet/:id.json".replace(':id', this.id)
+    //         params = {method: "POST",
+    //             handleSuccess: false,
+    //             handleError: false,
+    //             url: url,
+    //             account: this.account
+    //         }
+    //         TD.net.ajax.request(url, params)
+    //         this.setRetweeted(true)
+    //     }
+    //     else {
+    //         // uiUndoRetweet(tweetId: this.getMainTweet().id, from: this.account.getKey())
+    //         let search_url = TD.services.TwitterClient.prototype.API_BASE_URL + "statuses/show/:id.json?include_my_retweet=true".replace(':id', this.id)
+    //         let params = {method: "GET", include_my_retweet: true}
+    //         let search_resp = TD.net.ajax.request(search_url, params)
+    //         console.log(search_resp)
+    //         let rt_id = search_resp.results[0].data.current_user_retweet.id_str
+    //         // let rt_id = search_resp.results[0].data.retweeted_status.id_str
+    //         // var cb = new TD.core.defer.Deferred
+
+    //         let del_url = TD.services.TwitterClient.prototype.API_BASE_URL + "statuses/destroy/:id.json".replace(':id', rt_id)
+    //         params = {method: "POST",
+    //             handleSuccess: false,
+    //             handleError: false,
+    //             url: del_url,
+    //             account: this.account
+    //         }
+    //         TD.net.ajax.request(del_url, params)
+    //         this.setRetweeted(false)
+    //     }
+    // }
+
+    // var ad = new TD.components.ActionDialog({tweet: {tweet: {id: "xxx"}, accountSelector: new TD.components.AccountSelector, getMainUser: function() {return "yes"}},title: "yes"})
 })();

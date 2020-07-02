@@ -2,7 +2,7 @@
 // @name        Remove TweetDeck Retweet Modal Dialog
 // @description Skips the "Retweet to your followers?" modal asking whether or not to quote tweet for TweetDeck
 // @namespace   https://github.com/alexwh
-// @updateURL   https://github.com/alexwh/userscripts/raw/master/remove-tweetdeck-retweet-modal.user.js
+// @updateURL   https://github.com/alexwh/userscripts/raw/master/tweetdeck-remove-retweet-modal.user.js
 // @version     1.0
 // @match       https://tweetdeck.twitter.com/*
 // ==/UserScript==
